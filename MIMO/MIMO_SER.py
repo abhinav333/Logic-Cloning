@@ -21,28 +21,8 @@ LC_BOOTH_2=5
 LC_BOOTH_2_AC=6
 AXBM1=7
 AXBM2=8
-'''
-Notes of simulation patters:
-    
-    1. 8 bit  -> shift by 7, 4 qam 
 
 
-
-of it, either on the Editor or the Console.
-
-
-
-
-
-
-'''
-
-#channel_matrix=sp.loadmat("H_matrix_128.mat")
-
-#H_scm=channel_matrix['H_mat']
-
-
-#function declarations
 #QPSK Modulation
 def qamod(sym,constel):  
     c=np.sqrt(constel)
@@ -167,18 +147,7 @@ def mmse_method(y,x,A,sigmaN2):
 
 snr_iter=np.arange(-5,30,2)
 
-#time_admm_r1=np.zeros(snr_iter.size)
-#time_admm_r2=np.zeros(snr_iter.size)
-#time_admm_r3=np.zeros(snr_iter.size)
-#symerr_admm_r1=np.zeros(snr_iter.size) 
-#symerr_admm_r2=np.zeros(snr_iter.size) 
 
-#symerr_admm_r3=np.zeros(snr_iter.size)  
-#time_cd=np.zeros(snr_iter.size)
-#symerr_cd=np.zeros(snr_iter.size) 
-#time_sgd=np.zeros(snr_iter.size)
-#symerr_sgd=np.zeros(snr_iter.size) 
-#time_zf=np.zeros(snr_iter.size)
 symerr_zf=np.zeros(snr_iter.size) 
 symerr_zf_ba=np.zeros(snr_iter.size) 
 symerr_zf_m13_2=np.zeros(snr_iter.size) 
@@ -189,23 +158,13 @@ symerr_zf_lc_booth_2=np.zeros(snr_iter.size)
 symerr_zf_lc_booth_ac_2=np.zeros(snr_iter.size) 
 symerr_zf_axbm1=np.zeros(snr_iter.size)
 symerr_zf_axbm2=np.zeros(snr_iter.size)
-#symerr_bsgd=np.zeros(snr_iter.size) 
-#symerr_bsgd1=np.zeros(snr_iter.size) 
-#symerr_bsgd2=np.zeros(snr_iter.size)
-#symerr_amp_fd=np.zeros(snr_iter.size) 
-#symerr_amp_pd=np.zeros(snr_iter.size)
-#symerr_ep=np.zeros(snr_iter.size)  
-#symerr_mmse=np.zeros(snr_iter.size) 
 
 symerr_all=np.zeros((5,11,snr_iter.size))
 
 scale=np.sqrt(cluster_number)
 
 for K in range(K,K+2,2):
-    #print('U={}'.format(K))
     H=np.random.normal(loc=0, scale=1, size=(M,K*2)).view(np.complex128)/np.sqrt(2*M)
-   # H=H_scm/np.sqrt(M)
-    #H=2*H
     A=np.transpose(np.conjugate(H)) @ H   #zero forcing
     mmse_roh=0.01
     beta=np.float64(K/M)
@@ -249,12 +208,7 @@ for K in range(K,K+2,2):
         symerr_zf_axbm1[i]=symerr_zf_axbm1[i]/d_size
         symerr_zf_axbm2[i]=symerr_zf_axbm2[i]/d_size
         
-#        symerr_bsgd[i]=symerr_bsgd[i]/d_size 
-#        symerr_bsgd1[i]=symerr_bsgd1[i]/d_size 
-#        symerr_amp_fd[i]=symerr_amp_fd[i]/d_size 
-#        symerr_amp_pd[i]=symerr_amp_pd[i]/d_size
-#        symerr_ep[i]=symerr_ep[i]/d_size  
-#        symerr_mmse[i]=symerr_mmse[i]/d_size
+
     symerr_all[K//2,:,:]=np.array([snr_iter,symerr_zf,symerr_zf_ba,symerr_zf_m13_2,symerr_zf_m14_2,symerr_zf_lc_bw_2,symerr_zf_lc_bw_ac_2,symerr_zf_lc_booth_2,symerr_zf_lc_booth_ac_2,symerr_zf_axbm1,symerr_zf_axbm2])
      
      
@@ -272,7 +226,6 @@ pl.semilogy(snr_iter,symerr_zf_m14_2,'c--p',label='MUL8_14_2'.format(set_iterati
 pl.semilogy(snr_iter,symerr_zf_m13_2,'c--^',label='MUL8_13_2'.format(set_iteration))
 pl.semilogy(snr_iter,symerr_zf_ba,'y--o',label='BOOTH APPROX'.format(set_iteration))
 pl.semilogy(snr_iter,symerr_zf,'k-*',label='ZF',alpha=0.7)
-#pl.semilogy(snr_iter,symerr_mmse,'y-s',label='MMSE',alpha=0.2)
 
 
 pl.title('Symbol error rate: U={} B={} C={} QAM={} Iter={}'.format(K,M,cluster_number,M_QAM,set_iteration)) 
@@ -281,67 +234,8 @@ pl.ylabel('Symbol error rate')
 pl.legend()
 
 
-""" 
-pl.plot(QAM_var*(x_est.flatten().real),QAM_var*(x_est.flatten().imag),'bo')
-pl.plot(QAM_map.real,QAM_map.imag,'ro')
-pl.title('Co-ordinate descent: SNR={}dB u-parameter={}')  
-pl.xlabel('Real Axis')
-pl.ylabel('Imaginary Axis')
-"""
-
 
 pl.grid(True)
-
-
-
-
-
-
-
-#pl.plot(admm_i_gauss_ADMM,evm_simulation,'b--o')  
-#pl.title('ADMM-GS:  SNR={}dB   User-Terminals={}    Antenna/UT={}    Clusters={}'.format(SNR,K,MKratio,Max_C))  
-#pl.xlabel('Number of iterations')
-#pl.ylabel('Error Vector Magnitude (EVM)')
-#pl.grid(True)
-#print (calculate_evm(x_est_admm,x))
-
-##################################################################################################
-
-   
-#Extra stuff
-       
-##ZF method
-#invA=np.zeros(A.shape,dtype=A.dtype)
-#invA=np.linalg.inv(A)    
-#for f in range(0,Nframes):
-#invA=np.zeros(A.shape,dtype=A.dtype)
-#invA=np.linalg.inv(A)    
-#    x_est[:,f]=invA @ yMF[:,f]
-#
-#x_est_inv=np.copy(x_est)                
-
-
-#Gauss siedel
-#estimate the initial guess from by x=inverse(A)b. As A is diagonally dominant inverse of A can be obtained by reciprocal of the A. 
-#Aid=np.zeros(A.shape,dtype=A.dtype)
-#np.fill_diagonal(Aid,(1/np.diagonal(A)))
-#n_iter=3
- #number of iteration to perform 
-#try for 1st frame  
-#x_init=Aid @ yMF[:,0]
-#x_init_t=np.copy(x_init)
-#for i in range (n_iter):
-#    for r_scan in range (K):
-#        x_init_t[r_scan]=yMF[r_scan,0]
-#        for c_scan in range (K):
-#            if r_scan!=c_scan:
-#                x_init_t[r_scan]-=(A[r_scan,c_scan] * x_init[c_scan])
-#        #c_scan loop
-#        x_init[r_scan]=(1/A[r_scan,r_scan])*(x_init_t[r_scan])
-
-#err=np.abs(x_est.reshape(-1,1)-x.reshape(-1,1))
-#pl.plot(err,'b')
-
 
 
 

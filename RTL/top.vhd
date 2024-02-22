@@ -21,17 +21,7 @@ signal reg_out_p : std_logic_vector(N+M-1 downto 0);
 
 begin
 
---mul : entity work.optimised_accurate
---generic map(
---    N => N,
---    M => M
---)
---port map(
---    a => reg_in_a,
---    b => reg_in_b,
---    d => reg_in_d,
---    p => reg_out_p
---);
+
 
 --mul_app : entity work.approximate_multiplier
 --generic map(

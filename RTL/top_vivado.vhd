@@ -29,18 +29,6 @@ component mult_gen_0
 end component;
 
 
---mul : entity work.optimised_accurate
---generic map(
---    N => N,
---    M => M
---)
---port map(
---    a => reg_in_a,
---    b => reg_in_b,
---    d => reg_in_d,
---    p => reg_out_p
---);
-
 
 begin
 vivado_ip: mult_gen_0
