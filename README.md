@@ -29,3 +29,36 @@ Explain the purpose of each folder in the repository.
 This folder contains VHDL codes for FPGA implementation. Briefly describe the purpose and functionality of the VHDL codes. Include any dependencies or tools required for FPGA synthesis.
 
 #### Example Structure:
+
+
+
+
+### 2. C++ Multipliers
+
+This folder contains C++ code related to multipliers. Provide information on the types of multipliers implemented and their functionality. Include any build or execution instructions.
+
+#### Example Structure:
+
+
+### 3. MIMO Simulation
+
+This folder contains files related to MIMO (Multiple Input, Multiple Output) simulation. Describe the simulation setup and goals. Include any necessary instructions for running the simulations.
+
+#### Example Structure:
+
+
+
+## Getting Started
+
+Provide instructions on how to get started with the project. Include information on installing dependencies, setting up the development environment, and running basic examples.
+
+## Contributing
+
+Explain how others can contribute to the project. Include guidelines for reporting issues, submitting pull requests, and any coding standards.
+
+## License
+
+Specify the project's license and include any relevant license information.
+
+
+
