@@ -10,7 +10,7 @@
 
 ## Project Overview
 Please refer to following publication:
-Abhinav Kulkarni, Messaoud Ahmed Ouameur, Daniel Massicotte, Logic cloning based approximate signed multiplication circuits for FPGA,
+>Abhinav Kulkarni, Messaoud Ahmed Ouameur, Daniel Massicotte, Logic cloning based approximate signed multiplication circuits for FPGA,
 Microelectronics Journal,2024, 106135,ISSN 0026-2692,(Online: https://www.sciencedirect.com/science/article/pii/S0026269224000478)
 
 The project provides code for the work in above publication. Desription of the project is provided as follows. 
