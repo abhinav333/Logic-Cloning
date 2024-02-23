@@ -10,7 +10,9 @@
 
 ## Project Overview
 
-The Logic-Cloning Simulator aims to compute True Positive (TP) values of Boolean logic functions. This project holds significance in the evaluation of various circuits, including multiplication circuits and MIMO (Multiple Input Multiple Output) systems.
+The Logic-Cloning Simulator aims to compute True Positive (TP) values of Boolean logic functions. This project holds significance in the evaluation of various circuits, including multiplication circuits and MIMO (Multiple Input Multiple Output) systems. Please refer to following publication:
+Abhinav Kulkarni, Messaoud Ahmed Ouameur, Daniel Massicotte, Logic cloning based approximate signed multiplication circuits for FPGA,
+Microelectronics Journal,2024, 106135,ISSN 0026-2692, https://doi.org/10.1016/j.mejo.2024.106135. (https://www.sciencedirect.com/science/article/pii/S0026269224000478)
 
 ## Folder Structure
 
