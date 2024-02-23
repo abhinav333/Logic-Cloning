@@ -1,64 +1,29 @@
-# Logic-Cloning
-Simulator to compute TP values of Boolean logic functions. 
-
-
-# Project Name
-
-Brief project description goes here.
+# Logic-Cloning Simulator
 
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Folder Structure](#folder-structure)
-  - [1. FPGA Implementation (VHDL)](#fpga-implementation-vhdl)
-  - [2. C++ Multipliers](#c-multipliers)
-  - [3. MIMO Simulation](#mimo-simulation)
+  - [1. Multiplication](#multiplication)
+  - [2. RTL](#rtl)
+  - [3. MIMO](#mimo)
 - [Getting Started](#getting-started)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Project Overview
 
-Provide a brief overview of the project, its goals, and its significance.
+The Logic-Cloning Simulator aims to compute True Positive (TP) values of Boolean logic functions. This project holds significance in the evaluation of various circuits, including multiplication circuits and MIMO (Multiple Input Multiple Output) systems.
 
 ## Folder Structure
 
-Explain the purpose of each folder in the repository.
+### 1. Multiplication
 
-### 1. FPGA Implementation (VHDL)
+The Multiplication folder contains C code implementations for various multiplication circuits. The `app.c` file holds the code, and `app.h` includes necessary definitions. This project is configurable in any Integrated Development Environment (IDE) like Codeblocks with the GCC compiler. It allows the configuration of multiplication circuits for different bit widths. Configure the IDE to generate `.so` static library files from `app.c`. These static library files are then utilized in Python to simulate multiplication operations with approximate multiplication circuits. The execution of this project is essential in a Linux environment.
 
-This folder contains VHDL codes for FPGA implementation. Briefly describe the purpose and functionality of the VHDL codes. Include any dependencies or tools required for FPGA synthesis.
+### 2. RTL
 
-#### Example Structure:
+The RTL folder includes VHDL code for the RTL implementation of signed multiplication. Separate files are provided for accurate and LC (Logic Cloning) variants. The accurate multiplication utilizes Baugh Wooley (BW) and Radix-2 Booth schemes, with code in files `accurate_bw.vhd` and `accurate_booth.vhd`. LC methodology is employed for approximate multiplication, and the corresponding code is found in files `LC_bw.vhd` and `LC_Booth.vhd`. These multiplication implementations are instantiated in the `top.vhd` file as the top component. The `top_multiple.vhd` file contains multiple instances of the top component, serving as the apex file in the file hierarchy. Utilize these files to initiate an RTL project.
 
+### 3. MIMO 
 
-
-
-### 2. C++ Multipliers
-
-This folder contains C++ code related to multipliers. Provide information on the types of multipliers implemented and their functionality. Include any build or execution instructions.
-
-#### Example Structure:
-
-
-### 3. MIMO Simulation
-
-This folder contains files related to MIMO (Multiple Input, Multiple Output) simulation. Describe the simulation setup and goals. Include any necessary instructions for running the simulations.
-
-#### Example Structure:
-
-
-
-## Getting Started
-
-Provide instructions on how to get started with the project. Include information on installing dependencies, setting up the development environment, and running basic examples.
-
-## Contributing
-
-Explain how others can contribute to the project. Include guidelines for reporting issues, submitting pull requests, and any coding standards.
-
-## License
-
-Specify the project's license and include any relevant license information.
-
-
-
+The MIMO folder focuses on signal fidelity evaluation, measured in terms of Symbol Error Rate (SER), for MIMO uplink detection using Python. The `MIMO_SER.py` file assesses the SER of MIMO uplink detection employing Zero Forcing (ZF) and Minimum Mean Squared Error (MMSE) detection techniques. These techniques are implemented with approximate multiplication circuits. The `floatfix.py` file handles `c_types` operations, incorporating approximate multiplication and matrix inversion using the Gauss-Jordan method, leveraging approximate multiplication circuits. Note that the execution of this code requires a Linux environment.
