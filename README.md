@@ -6,9 +6,7 @@
   - [1. Multiplication](#multiplication)
   - [2. RTL](#rtl)
   - [3. MIMO](#mimo)
-- [Getting Started](#getting-started)
-- [Contributing](#contributing)
-- [License](#license)
+
 
 ## Project Overview
 
