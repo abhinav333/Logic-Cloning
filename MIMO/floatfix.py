@@ -3,7 +3,7 @@
 """
 Created on Fri Oct 22 10:07:49 2021
 
-@author: kali
+@author: Abhinav
 """
 import numpy as np
 import ctypes

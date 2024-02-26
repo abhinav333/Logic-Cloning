@@ -2,7 +2,7 @@
 """
 Created on Thu May 16 11:29:45 2019
 
-@author: Abhinav_Kulkarni
+@author: Abhinav
 MIMO uplink decoding codes
 """
 import numpy as np
@@ -117,7 +117,7 @@ def zf_method(y,x,A):
     yMF=np.zeros((K,Nframes),dtype=x.dtype)
     invA=np.linalg.inv(A)    
     for f in range(0,Nframes):
-        yMF[:,f]=np.conjugate(H.T) @ y[:,f]   #read about the MRC ratio combining
+        yMF[:,f]=np.conjugate(H.T) @ y[:,f]   
         x_est_zf[:,f]=invA @ yMF[:,f]
     return x_est_zf
 
@@ -127,7 +127,7 @@ def zf_method_mat(y,x,A,multiplier_config):
     yMF=np.zeros((K,Nframes),dtype=x.dtype)
     invA=fp.sfix_mat_inverse(A, bit_width, frac_width, multiplier_config)    #
     for f in range(0,Nframes):
-        yMF[:,[f]]=fp.sfix_mat_mul_cmplx(np.conjugate(H.T), y[:,[f]], bit_width, frac_width, multiplier_config)   #read about the MRC ratio combining
+        yMF[:,[f]]=fp.sfix_mat_mul_cmplx(np.conjugate(H.T), y[:,[f]], bit_width, frac_width, multiplier_config)   
         x_est_zf[:,[f]]=fp.sfix_mat_mul_cmplx(invA, yMF[:,[f]], bit_width, frac_width, multiplier_config) 
     return x_est_zf
 
