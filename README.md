@@ -13,7 +13,7 @@ Please refer to following publication:
 >Abhinav Kulkarni, Messaoud Ahmed Ouameur, Daniel Massicotte, Logic cloning based approximate signed multiplication circuits for FPGA,
 Microelectronics Journal,2024, 106135,ISSN 0026-2692,(Online: https://www.sciencedirect.com/science/article/pii/S0026269224000478)
 
-Correction in Fig 6: LUT L in the third row is inaccurately enclosed in dotted border. LC methodology in this work is applied to LUT-LS of same configuration in a particular MPP.   
+Correction in Fig 6: LUT L in the third row is inaccurately enclosed in dotted border. In this work, LC methodology is applied to LUT-LS of same configuration for a particular MPP.   
 
 The project provides code for the work in above publication. Description of the project is provided as follows. 
 
