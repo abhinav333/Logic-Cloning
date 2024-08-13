@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
 -- Company: 
--- Engineer: 
+-- Engineer:  Abhinav
 -- 
 -- Create Date: 08/21/2021 07:51:22 AM
 -- Design Name: 
@@ -167,7 +167,7 @@ begin
 end function assign_t_row;
 
 begin
---Generate LUTS
+--Generate LUTs
 t_row_1 (0)(1 downto 0)<="11";
 b_app<=b & '0';
 PP_ROW_GENERATE: for R in 0 to (N/2-1) generate --spans multiplier rows
@@ -183,8 +183,8 @@ PP_ROW_GENERATE: for R in 0 to (N/2-1) generate --spans multiplier rows
                                     I3 => b_app(2*R+1),--multiplicand bit
                                     I4 => b_app(2*R+2),  --multiplier bit
                                     I5 => '1',
-                                    O5 => lut_out_1(R)(0), --PP_in output
-                                    O6 => lut_out_0(R)(C1) --S out put
+                                    O5 => lut_out_1(R)(0), --PP_inoutput
+                                    O6 => lut_out_0(R)(C1) --S output
                                 );
                     pp_prod(2*R)<=lut_out_0(R)(C1);
                     carry(R)(0)<=lut_out_1(R)(0);        
@@ -215,8 +215,8 @@ PP_ROW_GENERATE: for R in 0 to (N/2-1) generate --spans multiplier rows
                                 I3 => b_app(2*R+1),--multiplicand bit
                                 I4 => b_app(2*R+2),  --multiplier bit
                                 I5 => '1',
-                                O5 => lut_out_1(R)(1), --PP_in output
-                                O6 => lut_out_0(R)(C1) --S out put
+                                O5 => lut_out_1(R)(1), --PP_inoutput
+                                O6 => lut_out_0(R)(C1) --S output
                             );
                             d_row(R)(C1-1)<=lut_out_1(R)(1);
                  end generate NEXT_LUT1;
@@ -231,7 +231,7 @@ PP_ROW_GENERATE: for R in 0 to (N/2-1) generate --spans multiplier rows
                                 I3 => b_app(2*R),
                                 I4 => b_app(2*R+1),--multiplicand bit
                                 I5 => b_app(2*R+2),  --multiplier bit
-                                O6 => lut_out_0(R)(C1) --S out put
+                                O6 => lut_out_0(R)(C1) --S output
                             );
                             d_row(R)(C1-1)<=t_row_1(R)(1);
                  end generate NEXT_LUT2;

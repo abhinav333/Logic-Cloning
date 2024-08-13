@@ -26,8 +26,6 @@ AXBM1=7
 AXBM2=8
 
 
-#c_lib.approximate_multiplier.argtypes = (ctypes.c_int64,ctypes.c_int64,ctypes.c_ubyte)
-#c_lib.approximate_multiplier.restype =  (ctypes.c_int64)
 
 c_lib.area_optimized_hdl_approx.argtypes = (ctypes.c_int64,ctypes.c_int64)
 c_lib.area_optimized_hdl_approx.restype = (ctypes.c_int64)
@@ -86,28 +84,22 @@ def approximate_multiplier(multiplicand, multiplier,m_config):
 
 
     
-
-
-#c_lib.area_optimized_hdl_approx.argtypes = (ctypes.c_int64,ctypes.c_int64)
-#c_lib.area_optimized_hdl_approx.restype =  ctypes.c_int64
-
-    
-def float2fix_scale(a,m,n):  # m is the bit-width, n is the frac part
+def float2fix_scale(a,m,n):  # m is the bit-width, n is fractional part
     scaled=np.multiply(a,np.power(2,n))
     if(scaled==np.NaN):
-        print("Nan detetcted")
+        print("Nan detected")
     scaled=np.int(round(scaled))
     min_bound=-1*np.power(2,m-1)
     max_bound=np.power(2,m-1)-1/np.power(2,1*n)
     return np.int(np.clip(scaled,min_bound,max_bound))
 
-def float2fix_double_descale(a,m,n):  # m is the bit-width, n is the frac part
+def float2fix_double_descale(a,m,n):  # m is the bit-width, n is fractional part
     descaled=np.divide(a,np.power(2,2*n))
     min_bound=-1*np.power(2,m-1)
     max_bound=np.power(2,m-1)-1/np.power(2,1*n)
     return np.clip(descaled,min_bound,max_bound)
 
-def float2fix_descale(a,m,n):  # m is the bit-width, n is the frac part
+def float2fix_descale(a,m,n):  # m is the bit-width, n is fractional part
     descaled=np.divide(a,np.power(2,n))
     min_bound=-1*np.power(2,m-1)
     max_bound=np.power(2,m-1)-1/np.power(2,1*n)
@@ -119,32 +111,12 @@ def float2fix_descale(a,m,n):  # m is the bit-width, n is the frac part
 def sfix_mul(a,b,m,n,multiplier_config,bit_width):
     op_a=float2fix_scale(a, m, n)
     op_b=float2fix_scale(b, m, n)
-    #op_c=np.multiply(op_a,op_b)  #IMPlement the multiplier of your choice
-    #op_c=c_lib.approximate_multiplier(ctypes.c_int64(op_a),ctypes.c_int64(op_b),ctypes.c_ubyte(multiplier_config))
-    #op_c1=c_lib.area_optimized_hdl_approx(ctypes.c_int64(op_a),ctypes.c_int64(op_b))
     op_c=approximate_multiplier(op_a, op_b ,multiplier_config)
     c=float2fix_double_descale(op_c, m, n)
     return c
 
-'''
-def sfix_mul_acc(a,b,m,n,multiplier_config):
-    op_a=float2fix_scale(a, m, n)
-    op_b=float2fix_scale(b, m, n)
-    #op_c=np.multiply(op_a,op_b)  #IMPlement the multiplier of your choice
-    op_c=c_lib.approximate_multiplier(ctypes.c_longlong(op_a),ctypes.c_longlong(op_b),ctypes.c_ubyte(multiplier_config))
-    c=float2fix_double_descale(op_c, m, n)
-    return c
-'''
-'''    
-def sfix_div(a,b,m,n):
-    c=np.divide(a,b)
-    min_bound=-1*np.power(2,m-1)
-    max_bound=np.power(2,m-1)-1/np.power(2,1*n)
-    return np.clip(c,min_bound,max_bound)    
-'''
-   
 
-##### This is different #######################################################################
+
 def sfix_mul_cmplx(a,b,m,n,multiplier_config):
     c_real_1=sfix_mul(a.real,b.real,m,n,multiplier_config)
     c_real_2=sfix_mul(a.imag,b.imag,m,n,multiplier_config)
@@ -207,10 +179,6 @@ def sfix_mat_inverse(A_mat,m,n,multiplier_config):
     
     return A[:,p:]        
     
-
-a=-1.7654
-b=2.3567
-c=sfix_mul(a,b,16,8,2)
 
 
 

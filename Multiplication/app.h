@@ -118,14 +118,9 @@ void print_binary2(unsigned long long n,unsigned int k_bits);
 void CARRY1(uchar s,uchar d, uchar cin, uchar* cout, uchar* xor_cout);
 
 
-//Cin has to be divided into CYINIT & CI ::Note this is for VHDL implementation. You can do this for VHDL impelemntation.
 void CARRY4(uchar* s, uchar* d, uchar Cin, uchar* cout_a, uchar* xor_cout_a);
 
 uchar not_gate(uchar number);
-
-//Function to create 64 bit value from a boolean function
-//Area-Optimized Accurate and Approximate Softcore Signed Multiplier Architectures : CODE : AO
-//An Efficient Softcore Multiplier Architecture for Xilinx FPGAs: CODE : ES
 
 void LUT_6_2(uchar a, uchar b, uchar c, uchar d, uchar e, uchar f, uchar lut_type, int* counter, uchar* result);
 
@@ -133,32 +128,9 @@ long long approximate_multiplier(long long multiplicand, long long multiplier, u
 void lut_testing();
 
 
-
-/********************************
-            HA - HA - HA - HA
-            FA - FA - FA
-Generate this kind of structure.
-Now create strings of the oprands to be passed to each of these rows.
-
-Row1: {op1, op2,.....}
-Row2: {op1,op2.......}
-
-like this where op1, op2... belong to Partial Product bits.
-********************************/
-/*****************************************
-An Efficient Softcore Multiplier Architecture for Xilinx FPGAs
-Martin Kumm, Shahid Abbas and Peter Zipf
-University of Kassel, Germany
-Digital Technology Group
-******************************************/
-
 long efficient_softcore(long multiplicand, long multiplier);
 
-
-
 long efficient_softcore_hdl(long multiplicand, long multiplier);
-
-
 
 long long unsigned_to_signed(unsigned long long a,uchar bit_width);
 
@@ -189,20 +161,10 @@ long long ax_bm2_opt(long multiplicand, long multiplier);
 long long signed_multiplication(long long multiplicand, long long multiplier);
 
 
-/*************
-AxBM
-************/
-
-
-
 
 long long ax_bm1_hdl(long multiplicand, long multiplier);
 
-
-
 void error_benchmarks(double* errors);
-
-
 
 
 

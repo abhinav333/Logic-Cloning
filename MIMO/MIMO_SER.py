@@ -3,7 +3,7 @@
 Created on Thu May 16 11:29:45 2019
 
 @author: Abhinav
-MIMO uplink decoding codes
+MIMO uplink detection
 """
 import numpy as np
 import matplotlib as mp
@@ -23,8 +23,8 @@ AXBM1=7
 AXBM2=8
 
 
-#QPSK Modulation
-def qamod(sym,constel):  
+
+def qamod(sym,constel):  #QPSK Modulation
     c=np.sqrt(constel)
     re=-2*np.mod(sym,c)+c-1
     im=2*np.floor(sym/c)-c+1
@@ -57,14 +57,13 @@ def calculate_SigmaN2(SNR):
     return np.float_power(10,-1*SNR/10.0) #evaluates to float64
 
 
-
 #variable declarations
-#MKratio=32   #MK ratio
+
 set_iteration=5
-K=np.uint16(4)    #number of user t  erminals
-cluster_number=np.uint16(4) #number of clusters  
-MperC=32
-M=np.uint16(cluster_number*MperC)   #number of antennas 
+K=np.uint16(4) #Number of UE
+cluster_number=np.uint16(4) #Number of BS antenna clusters  
+MperC=32 #Number of antennas per BS cluster 
+M=np.uint16(cluster_number*MperC) #Total number of antennas
 
 bit_width=8
 frac_width=7
@@ -76,39 +75,31 @@ Nframes=1
 
 mmse_roh=0.01
 
-QAM_map=qamod(np.arange(0,M_QAM),M_QAM)     #write a qammod function
+QAM_map=qamod(np.arange(0,M_QAM),M_QAM)  #QAM modulator
 data= np.random.randint(0,M_QAM,size=(K,Nframes))
-QAM_mod=np.array(QAM_map[data]) #symbol mapped tx signal
+QAM_mod=np.array(QAM_map[data]) #symbol mapped Tx signal
 QAM_var=np.sqrt(np.var(QAM_map))
 x=QAM_mod
 x_d=x
 
 def generate_data(M_QAM,K,Nframes):
-    QAM_map= qamod(np.arange(0,M_QAM),M_QAM)     #write a qammod function
+    QAM_map= qamod(np.arange(0,M_QAM),M_QAM)     
     data= np.random.randint(0,M_QAM,size=(K,Nframes))
-    QAM_mod=np.array(QAM_map[data]) #symbol mapped tx signal
+    QAM_mod=np.array(QAM_map[data]) 
     QAM_var=np.sqrt(np.var(QAM_map))
     x=QAM_mod/QAM_var
-    #x=QAM_mod
     return x,data,QAM_var
 
 def simulate_receive_signal(x,SNR,scale,H):
     var=np.sqrt(calculate_SigmaN2(SNR)/2)
     noise_sys=var*np.random.normal(loc=0, scale=1, size=(M,Nframes*2)).view(np.complex128)
-    y=np.zeros((M,Nframes),dtype=x.dtype) #array holding y(number of antennas)
+    y=np.zeros((M,Nframes),dtype=x.dtype) 
     for f in range(0,Nframes):
         y[:,f]= (H @ x[:,f]) + noise_sys[:,f]
     return y        
      
 x_est=np.zeros(x.shape,dtype=x.dtype)  
-########################################################   
-##ADMM-gauss siedel
 
-i_gauss_ADMM=np.uint16(6) #number of iterations
-
-#ZF method
-
-i_gauss_ADMM=np.uint16(6) #number of iterations
 
 #ZF method
 def zf_method(y,x,A):
@@ -121,6 +112,7 @@ def zf_method(y,x,A):
         x_est_zf[:,f]=invA @ yMF[:,f]
     return x_est_zf
 
+#ZF method using approximate multiplication application
 def zf_method_mat(y,x,A,multiplier_config):
     x_est_zf=np.zeros(x.shape,dtype=x.dtype) 
     invA=np.zeros(A.shape,dtype=A.dtype)
@@ -132,7 +124,7 @@ def zf_method_mat(y,x,A,multiplier_config):
     return x_est_zf
 
 
-
+#MMSE method
 def mmse_method(y,x,A,sigmaN2):
     x_est_mmse=np.zeros(x.shape,dtype=x.dtype) 
     invA=np.zeros(A.shape,dtype=A.dtype)
@@ -141,7 +133,7 @@ def mmse_method(y,x,A,sigmaN2):
     A_mmse=A+((sigmaN2/sigmaN2_QAM)*np.identity(K,dtype=np.complex128))
     invA=np.linalg.inv(A_mmse)    
     for f in range(0,Nframes):
-        yMF[:,f]=np.conjugate(H.T) @ y[:,f]   #read about the MRC ratio combining
+        yMF[:,f]=np.conjugate(H.T) @ y[:,f]   
         x_est_mmse[:,f]=invA @ yMF[:,f]
     return x_est_mmse
 
@@ -165,15 +157,13 @@ scale=np.sqrt(cluster_number)
 
 for K in range(K,K+2,2):
     H=np.random.normal(loc=0, scale=1, size=(M,K*2)).view(np.complex128)/np.sqrt(2*M)
-    A=np.transpose(np.conjugate(H)) @ H   #zero forcing
+    A=np.transpose(np.conjugate(H)) @ H   
     mmse_roh=0.01
     beta=np.float64(K/M)
     A_mmse=A+mmse_roh*np.identity(K,dtype=np.complex128)
     d_size=K*Nframes*multiple_frame
     for i in range(snr_iter.size):
-       # print(snr_iter[i])
         for fr in range(multiple_frame):
-           # print(fr)
             print('U={} SNR={} FRAME={}'.format(K,snr_iter[i],fr))
             x=generate_data(M_QAM,K,Nframes)  
             y=simulate_receive_signal(x[0],snr_iter[i],scale,H)
@@ -213,9 +203,6 @@ for K in range(K,K+2,2):
      
      
     
-
-
-
 pl.semilogy(snr_iter,symerr_zf_axbm2,'r-x',label='AXBM2'.format(set_iteration))
 pl.semilogy(snr_iter,symerr_zf_axbm1,'r-x',label='AXBM1'.format(set_iteration))
 pl.semilogy(snr_iter,symerr_zf_lc_booth_ac_2,'b-s',label='LC BOOTH AC'.format(set_iteration))

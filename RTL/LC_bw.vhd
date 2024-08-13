@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
 -- Company: 
--- Engineer: 
+-- Engineer: Abhinav
 -- 
 -- Create Date: 08/21/2021 07:51:22 AM
 -- Design Name: 
@@ -90,8 +90,8 @@ signal lut_out_1:LUT_SIG:= (others => (others => '0'));
 signal pp_prod:std_logic_vector(N-1 downto 0):=(others => '0');
 
 constant version:integer:=2;
---function to compute the LUTs in each row
 
+--function to compute the LUTs in each row
 function compute_lut_row1(bit_width : integer; pp_row : integer; version : integer) return integer is
 variable comp_result : integer;
 begin
@@ -188,7 +188,7 @@ PP_ROW_GENERATE: for R in 0 to N-1 generate --spans multiplier rows
                                 I1=>assign_a(a,R,C1,version,N),
                                 I0 => b(R),  --multiplier bit
                                 O5 => lut_out_1(R)(C1), --PP_in output
-                                O6 => lut_out_0(R)(C1) --S out put
+                                O6 => lut_out_0(R)(C1) --S output
                             );
                 end generate PP_COL_GEN3;
            end generate PP_COL_GENERATE_F1;
@@ -224,7 +224,7 @@ PP_ROW_GENERATE: for R in 0 to N-1 generate --spans multiplier rows
                                     I1 => a(C1),--multiplicand bit
                                     I0 => b(R),  --multiplier bit
                                     O5 => lut_out_1(R)(C1), --PP_in output
-                                    O6 => lut_out_0(R)(C1) --S out put
+                                    O6 => lut_out_0(R)(C1) --S output
                                 );
                    end generate P2;
                 P3:if C1 = N generate

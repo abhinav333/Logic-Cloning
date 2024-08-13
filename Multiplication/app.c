@@ -12,8 +12,6 @@
 #define M1
 #define MUM 2*M1
 
-
-
 //global variables
 uchar carry_opt[PP_NUM_SIGNED][BIT_WIDTH+2]={ };
 uchar lut_opt[PP_NUM_SIGNED][BIT_WIDTH+2]={ };
@@ -180,9 +178,7 @@ uchar not_gate(uchar number)
     return (~number & 1);
 }
 
-//Function to create 64 bit value from a boolean function
-//Area-Optimized Accurate and Approximate Softcore Signed Multiplier Architectures : CODE : AO
-//An Efficient Softcore Multiplier Architecture for Xilinx FPGAs: CODE : ES
+
 
 void LUT_6_2(uchar a, uchar b, uchar c, uchar d, uchar e, uchar f, uchar lut_type, int* counter, uchar* result)
 {
@@ -401,17 +397,6 @@ void lut_testing()
 }
 
 
-/********************************
-            HA - HA - HA - HA
-            FA - FA - FA
-Generate this kind of structure.
-Now create strings of the oprands to be passed to each of these rows.
-
-Row1: {op1, op2,.....}
-Row2: {op1,op2.......}
-
-like this where op1, op2... belong to Partial Product bits.
-********************************/
 /*****************************************
 An Efficient Softcore Multiplier Architecture for Xilinx FPGAs
 Martin Kumm, Shahid Abbas and Peter Zipf
@@ -674,6 +659,7 @@ long long baugh_wooley_hdl(long long multiplicand, long long multiplier)
     return(prod);
 }
 
+
 long long lc_baugh_wooley_opt(long long multiplicand, long long multiplier, int version)
 {
     uchar bits[3]={ };
@@ -826,6 +812,7 @@ long long lc_baugh_wooley_opt(long long multiplicand, long long multiplier, int 
     prod=unsigned_to_signed(prod,2*BIT_WIDTH);
     return(prod);
 }
+
 
 long long lc_baugh_wooley_opt_ac(long long multiplicand, long long multiplier, int version)
 {
@@ -999,7 +986,6 @@ long long lc_baugh_wooley_opt_ac(long long multiplicand, long long multiplier, i
 
 
 
-//signed
 
 long long area_optimized_hdl(long long multiplicand, long long multiplier)
 {
@@ -1071,7 +1057,6 @@ long long area_optimized_hdl(long long multiplicand, long long multiplier)
 
 
 
-// The B LUT for last PP row is not required hence it can be removed.
 long long area_optimized_hdl_opt(long long multiplicand, long long multiplier)
 {
     long long multiplier_appended=multiplier<<1;
@@ -1446,7 +1431,7 @@ long long lc_booth_opt_ac(long long multiplicand, long long multiplier,int versi
             //goes in to carry
             if(pp_col>0)
             {
-            //################ In test ##################
+
              if(pp_col<=((2*(PP_NUM_SIGNED-pp_row-1)+ver)))
              {
               if(cnt==0)
@@ -1460,11 +1445,11 @@ long long lc_booth_opt_ac(long long multiplicand, long long multiplier,int versi
              else{
                 CARRY1(lut_result[pp_row][pp_col][0],lut_result[pp_row][pp_col][1],carry[pp_row][pp_col-1],&carry[pp_row][pp_col],&res[pp_row][pp_col]);
              }
-             //##########################################
+
 
             }
 
-            //accumulate results x,p1,p2,t0,t1,........... t9,1
+
             if(pp_col<2)
             {
                 pp_products[pp_row*2+pp_col]=res[pp_row][pp_col];
@@ -1512,287 +1497,6 @@ long long lc_booth_opt_ac(long long multiplicand, long long multiplier,int versi
 
 
 
-
-
-/*
-long long stair_booth_opt_v2_2(long long multiplicand, long long multiplier)
-{
-    long long multiplier_appended=multiplier<<1;
-    long long multiplicand_appended=multiplicand<<1;
-    uchar bits[3]={ };
-    long long pp_products[PP_NUM_SIGNED*2]={ };
-    int lut_counter=0;
-    uchar multiple_tuple[2];
-    //condition t_row
-    uchar t_row[PP_NUM_SIGNED+1][BIT_WIDTH+2]={ };//initialize all zero
-    t_row[0][BIT_WIDTH+1]=1;
-    t_row[0][BIT_WIDTH]=1;
-    uchar lut_result[PP_NUM_SIGNED][BIT_WIDTH+2][2]={0,0};
-    uchar carry[PP_NUM_SIGNED][BIT_WIDTH+2]={ };
-    uchar res[PP_NUM_SIGNED][BIT_WIDTH+2]={ };
-    long long prod=0;
-    uchar pp_in=0;
-    uchar lut_temp[2]={ };
-    int cnt=0;
-    for(int pp_row=0;pp_row<PP_NUM_SIGNED;pp_row++)
-    {
-        //2i-1, 2i, 2i+1; However since the index of the multiplier_appended starts from 0 instead of -1, just +1 for all indices
-        bits[BIT_LSB]=multiplier_appended >>(2*pp_row) & 1;
-        bits[BIT_CSB]=multiplier_appended >>(2*pp_row+1) & 1;
-        bits[BIT_MSB]=multiplier_appended >>(2*pp_row+2) & 1;
-        cnt=0;
-        for(int pp_col=0;pp_col<BIT_WIDTH+2;pp_col++)
-        {
-            multiple_tuple[0]=(multiplicand_appended >> pp_col) & 1;
-            multiple_tuple[1]=(multiplicand_appended >> pp_col+1) & 1;
-            pp_in=t_row[pp_row][pp_col];
-            if(pp_col==0)
-            {
-             LUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_A1,&lut_counter,lut_result[pp_row][pp_col]);
-             carry[pp_row][pp_col]=lut_result[pp_row][pp_col][1];
-             res[pp_row][pp_col]=lut_result[pp_row][pp_col][0];
-            }
-            else if(pp_col==(BIT_WIDTH+1))
-            {
-             LUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_B,&lut_counter,lut_result[pp_row][pp_col]);
-            }
-            else if(pp_col==(BIT_WIDTH))
-            {
-             LUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_A2,&lut_counter,lut_result[pp_row][pp_col]);
-            }
-            else if(pp_col>0 && pp_col<=((2*(PP_NUM_SIGNED-pp_row-1)+1)))
-            {
-                if(cnt==0)
-                {
-                  multiple_tuple[0]=(multiplicand_appended >> (2*(PP_NUM_SIGNED-pp_row-1)+1) & 1);
-                  multiple_tuple[1]=(multiplicand_appended >> (2*(PP_NUM_SIGNED-pp_row-1)+2) & 1);
-                  LUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_A,&lut_counter,lut_temp);
-                    //LUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,1,0,LUT_AO_A,&lut_counter,lut_temp);
-                }
-                cnt++;
-                lut_result[pp_row][pp_col][0]=lut_temp[0];
-                lut_result[pp_row][pp_col][1]=lut_temp[1];
-            }
-            else
-            {
-             LUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_A,&lut_counter,lut_result[pp_row][pp_col]);
-            }
-            //goes in to carry
-            if(pp_col>0)
-            {
-             CARRY1(lut_result[pp_row][pp_col][0],lut_result[pp_row][pp_col][1],carry[pp_row][pp_col-1],&carry[pp_row][pp_col],&res[pp_row][pp_col]);
-            }
-
-            //accumulate results x,p1,p2,t0,t1,........... t9,1
-            if(pp_col<2)
-            {
-                pp_products[pp_row*2+pp_col]=res[pp_row][pp_col];
-            }else if(pp_col>=2)
-            {
-                t_row[pp_row+1][pp_col-2]=res[pp_row][pp_col]; //the t_row[0] is supposed to be zero (LSB LUT of PP)
-            }
-        }//pp_col loop
-        t_row[pp_row+1][BIT_WIDTH+1]=carry[pp_row][BIT_WIDTH+1];
-        t_row[pp_row+1][BIT_WIDTH]=carry[pp_row][BIT_WIDTH+1];
-    }//pp_row loop
-    for(int i=0;i<BIT_WIDTH*2;i++)
-    {
-            if(i<PP_NUM_SIGNED*2)
-            {
-                    prod|=(long long)pp_products[i]<<i;
-            }
-            else{
-                    prod|=(long long)t_row[PP_NUM_SIGNED][i-(PP_NUM_SIGNED*2)] << i;
-            }
-    }
-
-#ifdef CARRY_PROBE
-
-    //Carry probe
-
-   for (int i1 = 0; i1 < PP_NUM_SIGNED; i1++){
-        for (int j1 = 0; j1 < (BIT_WIDTH+2); j1++){
-            carry_opt[i1][j1] = carry[i1][j1] ;
-        }
-
-        }
-
-        for (int i1 = 0; i1 < PP_NUM_SIGNED; i1++){
-        for (int j1 = 0; j1 < (BIT_WIDTH+2); j1++){
-            lut_opt[i1][j1] = lut_result[i1][j1][0] ;
-        }
-
-        }
-#endif
-
-    return(prod);
-}
-*/
-/*
-long long star_booth_opt_v3(long long multiplicand, long long multiplier)
-{
-    long long multiplier_appended=multiplier<<1;
-    long long multiplicand_appended=multiplicand<<1;
-    uchar bits[3]={ };
-    long long pp_products[PP_NUM_SIGNED*2]={ };
-    int lut_counter=0;
-    uchar multiple_tuple[2];
-    //condition t_row
-    //uchar T_NUM=
-    //WHen implementing VHDL this can be precisely calculated.
-    uchar t_row[PP_NUM_SIGNED+1][BIT_WIDTH+2]={ };//initialize all zero
-    uchar lut_result[PP_NUM_SIGNED+1][BIT_WIDTH+2][2]={ };
-    //uchar lut
-    long long prod=0;
-    uchar pp_in=0;
-    uchar lut_temp[2]={ };
-    uchar pp_row_cols=5; //
-    uchar pp_slab=0;
-    uchar cin=0;
-    uchar sulut1_result[3]={ };
-    uchar sulut2_result[2]={ };
-    uchar res=0;
-    t_row[0][4]=1;
-    t_row[0][3]=1;
-    for(int pp_row=0;pp_row<PP_NUM_SIGNED;pp_row++)
-    {
-        //2i-1, 2i, 2i+1; However since the index of the multiplier_appended starts from 0 instead of -1, just +1 for all indices
-        bits[BIT_LSB]=multiplier_appended >>(2*pp_row) & 1;
-        bits[BIT_CSB]=multiplier_appended >>(2*pp_row+1) & 1;
-        bits[BIT_MSB]=multiplier_appended >>(2*pp_row+2) & 1;
-        pp_slab=0;
-        cin=0;
-        for(int pp_col=0;pp_col<pp_row_cols;pp_col++)
-        {
-            multiple_tuple[0]=(multiplicand_appended >> (pp_col+pp_slab)) & 1;  //SA lut multiplie tuple[0] : pp_col value=1 + (slab-1)
-            multiple_tuple[1]=(multiplicand_appended >> (pp_col+pp_slab+1)) & 1;    //SA lut multiplie tuple[0] : pp_col value=1 + (slab)
-            pp_in=t_row[pp_row][pp_col]; //Have to adjust this.
-            if(pp_col==0)
-            {
-             LUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_A1,&lut_counter,lut_result[pp_row][pp_col]);
-             cin=lut_result[pp_row][pp_col][1];
-             res=lut_result[pp_row][pp_col][0];
-             if(pp_row < (PP_NUM_SIGNED-1))
-             {
-                //pp_slab=(2*(PP_NUM_SIGNED-pp_row-1))-1;
-
-             }
-            }
-            else if(pp_row < (PP_NUM_SIGNED-2) && pp_col==1)
-            {
-                //SuperLUT1_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_A,&lut_counter,cin,&cin,sulut1_result,pp_slab);
-                SuperLUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_A,&lut_counter,cin,&cin,sulut2_result);
-                res=sulut2_result[0];
-                t_row[pp_row+1][0]=sulut2_result[1];
-                t_row[pp_row+1][1]=sulut2_result[1];
-            }
-            else if(pp_row == (PP_NUM_SIGNED-2) && pp_col==1)
-            {
-                SuperLUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_A,&lut_counter,cin,&cin,sulut2_result);
-                res=sulut2_result[0];
-                t_row[pp_row+1][0]=sulut2_result[1];
-            }
-            else if(pp_col==(pp_row_cols-1))
-            {
-                LUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_B,&lut_counter,lut_result[pp_row][pp_col]);
-            }
-            else if(pp_col==(pp_row_cols-2))
-            {
-                LUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_A2,&lut_counter,lut_result[pp_row][pp_col]);
-            }
-            else
-            {
-                LUT_6_2(bits[BIT_MSB],bits[BIT_CSB],bits[BIT_LSB],pp_in,multiple_tuple[1],multiple_tuple[0],LUT_AO_A,&lut_counter,lut_result[pp_row][pp_col]);
-            }
-
-            //goes in to carry
-            if(pp_row==PP_NUM_SIGNED-1)
-            {
-                if(pp_col>0) //0->A1 1->SA1/2 No carry block required.
-                {
-                    CARRY1(lut_result[pp_row][pp_col][0],lut_result[pp_row][pp_col][1],cin,&cin,&res);
-                }
-
-            }
-            else{
-                if(pp_col>1) //0->A1 1->SA1/2 No carry block required.
-                {
-                    CARRY1(lut_result[pp_row][pp_col][0],lut_result[pp_row][pp_col][1],cin,&cin,&res);
-                }
-            }
-            //accumulate results x,p1,p2,t0,t1,........... t9,1
-            if(pp_col<2)
-            {
-                pp_products[pp_row*2+pp_col]=res;
-            }else if(pp_col>=2)
-            {
-                if(pp_row==PP_NUM_SIGNED-2)
-                    t_row[pp_row+1][pp_col-1]=res; //the t_row[0] is supposed to be zero (LSB LUT of PP)
-                else if(pp_row==PP_NUM_SIGNED-1)
-                    t_row[pp_row+1][pp_col-2]=res;
-                else
-                    t_row[pp_row+1][pp_col]=res;
-            }
-
-        }//pp_col loop
-
-        if(pp_row==(PP_NUM_SIGNED-2))
-        {
-            t_row[pp_row+1][pp_row_cols-1]=cin;
-            t_row[pp_row+1][pp_row_cols]=cin;
-        }
-        else
-        {
-            t_row[pp_row+1][pp_row_cols]=cin;
-            t_row[pp_row+1][pp_row_cols+1]=cin;
-        }
-
-        if(pp_row<(PP_NUM_SIGNED-2))
-        {
-            pp_row_cols+=2;
-        }
-        else{
-            pp_row_cols+=1;
-        }
-
-    }//pp_row loop
-    for(int i=0;i<BIT_WIDTH*2;i++)
-    {
-            if(i<PP_NUM_SIGNED*2)
-            {
-                    prod|=(long long)pp_products[i]<<i;
-            }
-            else{
-                    prod|=(long long)t_row[PP_NUM_SIGNED][i-(PP_NUM_SIGNED*2)] << i;
-            }
-    }
-
-    /*
-#ifdef CARRY_PROBE
-
-    //Carry probe
-
-   for (int i1 = 0; i1 < PP_NUM_SIGNED; i1++){
-        for (int j1 = 0; j1 < (BIT_WIDTH+2); j1++){
-            carry_opt[i1][j1] = carry[i1][j1] ;
-        }
-
-        }
-
-        for (int i1 = 0; i1 < PP_NUM_SIGNED; i1++){
-        for (int j1 = 0; j1 < (BIT_WIDTH+2); j1++){
-            lut_opt[i1][j1] = lut_result[i1][j1][0] ;
-        }
-
-        }
-#endif
-
-    return(prod);
-}
-*/
-
-
-
 void probe_carry(uchar *carry_values)
 {
         for (int i1 = 0; i1 < PP_NUM_SIGNED; i1++){
@@ -1824,7 +1528,7 @@ void probe_values(uchar *lut_values)
 
 
 
-////////////////////////IEEE Access: FPGA-Based Multi-Level Approximate Multipliers for High-Performance Error-Resilient Applications
+//FPGA-Based Multi-Level Approximate Multipliers for High-Performance Error-Resilient Applications
 
 void half_adder(uchar a, uchar b, uchar* sum, uchar* cout)
 {
@@ -1861,7 +1565,6 @@ void exact_compressor(uchar a, uchar b, uchar c, uchar d, uchar cin, uchar *sum,
 }
 
 
-// GOLDEN FOR SIGNED
 void approximate_compressor_3_2(uchar a, uchar b, uchar c, uchar* res1, uchar* res2)
 {
     //swapper a<->c
@@ -1965,7 +1668,6 @@ long long multilevel_signed_opt(long long multiplicand_sign, long long multiplie
     uchar cin=0;
     long long multiplicand_in=multiplicand;
     long long multiplier_in=multiplier;
-    //accurate part: NOTE it also requires the carry from the previous part
     char r_shift=0;
     for(int pp_row=0; pp_row<BIT_WIDTH_ML ;pp_row++)
     {
@@ -1986,7 +1688,6 @@ long long multilevel_signed_opt(long long multiplicand_sign, long long multiplie
         {
             pps_r=pps_r ^ (1 << (BIT_WIDTH_ML-1));
         }
-//        pps_acc[pp_row]=pps_r<<pp_row; //ONLY for test
         r_shift=(2*BIT_WIDTH_ML)-k-pp_row;
         if(r_shift<0)
         {
@@ -1996,19 +1697,11 @@ long long multilevel_signed_opt(long long multiplicand_sign, long long multiplie
                 pps_acc[pp_row]=(pps_r>>r_shift)<<((2*BIT_WIDTH_ML)-k);
         }
 
-        //print_binary2(pps_acc[pp_row],16);
-        //printf("\n");
-
         pp_product+=pps_acc[pp_row];
     }
 
-    //Have to shift carry fromt he approximate part by << (2*BIT_WIDTH_ML)-k;
     pp_product&=(1 << 2*BIT_WIDTH_ML)-1;
-   // print_binary2(pp_product,16);
-   // printf("\n");
-   // return(pp_product);
 
-    //approximate part
     for(int i=1;i<=BIT_WIDTH_ML;i++)
     {
         pp_n[cnt]=i;
@@ -2054,7 +1747,6 @@ long long multilevel_signed_opt(long long multiplicand_sign, long long multiplie
 
     }
 
-    //insert 1 at he BIT_WIDTH_ML+1 position ALSO increase the counter at this position.
     pp_n[BIT_WIDTH_ML]+=1;
     for(int pp_row=BIT_WIDTH_ML-1;pp_row>0;pp_row--)
     {
@@ -2062,16 +1754,7 @@ long long multilevel_signed_opt(long long multiplicand_sign, long long multiplie
     }
     pps_st1[0][BIT_WIDTH_ML]=1;
     pps_st1[0][2*BIT_WIDTH_ML-1]=1;
-/*
-    for(int xt=0;xt< BIT_WIDTH_ML;xt++)
-    {
-        for(int yt=(2*BIT_WIDTH_ML)-1;yt>=0;yt--)
-        {
-                    printf("%d",pps_st1[xt][yt]);
-        }
-        printf("\n");
-    }
-*/
+
 
     int v_cnt=0;
     int s_cnt=0;
@@ -2117,7 +1800,7 @@ long long multilevel_signed_opt(long long multiplicand_sign, long long multiplie
     }
 
     pp_n[9]+=1;
-    //stage 2
+
     for(int pp_cls=0;pp_cls < ((2*BIT_WIDTH_ML)-k);pp_cls++)
     {
             v_cnt=0;
@@ -2147,7 +1830,6 @@ long long multilevel_signed_opt(long long multiplicand_sign, long long multiplie
             pp_n_l[pp_cls+1]=s_cnt1;
     }
 
-        //RCA on pps_st1 ->Series of full adders
     for(int pp_cls=0; pp_cls < ((2*BIT_WIDTH_ML)-k); pp_cls++)
     {
         pp_out=0;
@@ -2206,13 +1888,7 @@ long long multilevel_opt(long long multiplicand, long long multiplier, char c2, 
         pp_product+=pps_acc[pp_row];
     }
 
-    //Have to shift carry fromt he approximate part by << (2*BIT_WIDTH_ML)-k;
     pp_product&=(1 << 2*BIT_WIDTH_ML)-1;
-   // print_binary2(pp_product,16);
-   // printf("\n");
-   // return(pp_product);
-
-    //approximate part
     for(int i=1;i<=BIT_WIDTH_ML;i++)
     {
         pp_n[cnt]=i;
@@ -2243,18 +1919,6 @@ long long multilevel_opt(long long multiplicand, long long multiplier, char c2, 
         }
 
     }
-
-    //insert 1 at he BIT_WIDTH_ML+1 position ALSO increase the counter at this position.
-/*
-    for(int xt=0;xt< BIT_WIDTH_ML;xt++)
-    {
-        for(int yt=(2*BIT_WIDTH_ML)-1;yt>=0;yt--)
-        {
-                    printf("%d",pps_st1[xt][yt]);
-        }
-        printf("\n");
-    }
-*/
 
     int v_cnt=0;
     int s_cnt=0;
@@ -2383,19 +2047,12 @@ long long multilevel16_opt(long long multiplicand, long long multiplier, char c2
                 pps_acc[pp_row]=(pps_r>>r_shift)<<((2*BIT_WIDTH_2ML)-k);
         }
 
-        //print_binary2(pps_acc[pp_row],16);
-        //printf("\n");
 
         pp_product+=pps_acc[pp_row];
     }
 
-    //Have to shift carry fromt he approximate part by << (2*BIT_WIDTH_2ML)-k;
-    pp_product&=(1 << 2*BIT_WIDTH_2ML)-1;
-   // print_binary2(pp_product,16);
-   // printf("\n");
-   // return(pp_product);
 
-    //approximate part
+    pp_product&=(1 << 2*BIT_WIDTH_2ML)-1;
     for(int i=1;i<=BIT_WIDTH_2ML;i++)
     {
         pp_n[cnt]=i;
@@ -2428,17 +2085,7 @@ long long multilevel16_opt(long long multiplicand, long long multiplier, char c2
 
     }
 
-    //insert 1 at he BIT_WIDTH_2ML+1 position ALSO increase the counter at this position.
-/*
-    for(int xt=0;xt< BIT_WIDTH_2ML;xt++)
-    {
-        for(int yt=(2*BIT_WIDTH_2ML)-1;yt>=0;yt--)
-        {
-                    printf("%d",pps_st1[xt][yt]);
-        }
-        printf("\n");
-    }
-*/
+
 
     int v_cnt=0;
     int s_cnt=0;
@@ -2612,7 +2259,6 @@ long long multilevel16_signed_opt(long long multiplicand_sign, long long multipl
         {
             pps_r=pps_r ^ (1 << (BIT_WIDTH_2ML-1));
         }
-//        pps_acc[pp_row]=pps_r<<pp_row; //ONLY for test
         r_shift=(2*BIT_WIDTH_2ML)-k-pp_row;
         if(r_shift<0)
         {
@@ -2622,17 +2268,12 @@ long long multilevel16_signed_opt(long long multiplicand_sign, long long multipl
                 pps_acc[pp_row]=(pps_r>>r_shift)<<((2*BIT_WIDTH_2ML)-k);
         }
 
-        //print_binary2(pps_acc[pp_row],16);
-        //printf("\n");
-
         pp_product+=pps_acc[pp_row];
     }
 
     //Have to shift carry fromt he approximate part by << (2*BIT_WIDTH_2ML)-k;
     pp_product&=(1 << 2*BIT_WIDTH_2ML)-1;
-   // print_binary2(pp_product,16);
-   // printf("\n");
-   // return(pp_product);
+
 
     //approximate part
     for(int i=1;i<=BIT_WIDTH_2ML;i++)
@@ -2688,16 +2329,6 @@ long long multilevel16_signed_opt(long long multiplicand_sign, long long multipl
     }
     pps_st1[0][BIT_WIDTH_2ML]=1;
     pps_st1[0][2*BIT_WIDTH_2ML-1]=1;
-/*
-    for(int xt=0;xt< BIT_WIDTH_2ML;xt++)
-    {
-        for(int yt=(2*BIT_WIDTH_2ML)-1;yt>=0;yt--)
-        {
-                    printf("%d",pps_st1[xt][yt]);
-        }
-        printf("\n");
-    }
-*/
 
     int v_cnt=0;
     int s_cnt=0;
@@ -2742,9 +2373,6 @@ long long multilevel16_signed_opt(long long multiplicand_sign, long long multipl
             pp_n[pp_cls]=s_cnt;
     }
 
-//    pp_n[17]+=1;
-  //  pp_n[18]+=1;
-    //stage 2
     for(int pp_cls=0;pp_cls < ((2*BIT_WIDTH_2ML)-k);pp_cls++)
     {
             v_cnt=0;
@@ -2848,7 +2476,6 @@ long long multilevel16_signed_opt(long long multiplicand_sign, long long multipl
     return(pp_product);
 }
 
-//TESTED:OK
 long long multilevel2B_opt(long long multiplicand, long long multiplier, char c2, char k_paper)
 {
     long long multiplicand_l=0;
@@ -2875,12 +2502,7 @@ long long multilevel2B_opt(long long multiplicand, long long multiplier, char c2
     prod2_h=multilevel_opt(multiplicand_h, multiplier_h,c2,k_paper);
     prod3=multilevel_opt(multiplicand_l, multiplier_h,c2,k_paper);
 
-/*
-    prod1=multiplicand_h*multiplier_l;
-    prod2_l=multiplicand_l*multiplier_l;
-    prod2_h=multiplicand_h* multiplier_h;
-    prod3=multiplicand_l* multiplier_h;
-*/
+
     prod1=prod1 << (BIT_WIDTH_ML);
     prod2=(prod2_h << (2*BIT_WIDTH_ML)) | prod2_l;
     prod3=prod3 << (BIT_WIDTH_ML);
@@ -2892,7 +2514,6 @@ long long multilevel2B_opt(long long multiplicand, long long multiplier, char c2
 
 
 
-//Test this by inserting a 8 bit accurate multiplier in place to approimate multiplier
 
 
 long long multilevel2B_signed_opt(long long multiplicand_in, long long multiplier_in, char c2, char k_paper)
@@ -2928,6 +2549,7 @@ long long multilevel2B_signed_opt(long long multiplicand_in, long long multiplie
     prod=unsigned_to_signed(prod,4*BIT_WIDTH_ML+1);
     return(prod);
 }
+
 
 //AXBM
 char encoder(uchar a, uchar b, uchar c, uchar d,uchar encoder_type)
@@ -3118,46 +2740,6 @@ long long approximate_multiplier(long long multiplicand, long long multiplier, u
     return(result);
 }
 
-/*
-long long approximate16_multiplier(long long multiplicand, long long multiplier, uchar MULT)
-{
-    long long result=0;
-    switch(MULT)
-    {
-        case BOOTH_APPROX:
-            result=area_optimized_hdl_approx(multiplicand,multiplier);
-            break;
-        case MUL8_13_4:
-            result=multilevel2B_signed3_opt(multiplicand, multiplier,3,4);
-            break;
-        case MUL8_14_4:
-            result=multilevel2B_signed3_opt(multiplicand, multiplier,4,4);
-            break;
-        case LC_BW_2:
-            result=lc_baugh_wooley_opt(multiplicand,multiplier,2);
-            break;
-        case LC_BW_2_AC:
-            result=lc_baugh_wooley_opt_ac(multiplicand,multiplier,2);
-            break;
-        case LC_BOOTH_2:
-            result=lc_booth_opt(multiplicand,multiplier,2);
-            break;
-        case LC_BOOTH_2_AC:
-            result=lc_booth_opt_ac(multiplicand,multiplier,2);
-            break;
-        case AXBM1:
-            result=ax_bm1_opt(multiplicand,multiplier);
-            break;
-        case AXBM2:
-            result=ax_bm2_opt(multiplicand,multiplier);
-            break;
-        default:
-            printf("Invalid choice\n");
-            break;
-
-    }
-    return(result);
-}*/
 
 double ber_error(long long acc, long long app,char p_bit_width)
 {
@@ -3175,10 +2757,7 @@ double ber_error(long long acc, long long app,char p_bit_width)
 
 void error_benchmarks(double* errors)
 {
-    //get absolute value of pa-pt
-    //operate on this value to get error metrics.
-    //change or make 'unsigned int' generic since it holds result of Booth mutliplication.
-    // SHould a * b  and b* a considered separately??? SHould it be C^n_2 (unique comninations)? DOesn't matter since 2*(same_error) /2 =same_error
+
     long long M_acc=0;
     long long M_app=0;
     long long ed=0;
@@ -3196,7 +2775,6 @@ void error_benchmarks(double* errors)
     double ln_prob_0[2*BIT_WIDTH]={ };
     double ln_prob_1[2*BIT_WIDTH]={ };
     double pr=0;
-    //double pr_num[1<<(2*BIT_WIDTH)]={ };
     long long number_elements=((long long)1)<<(2*BIT_WIDTH);
     long long products_num[((long long)1)<<(2*BIT_WIDTH)]={ };
     long cnt=0;
@@ -3204,43 +2782,9 @@ void error_benchmarks(double* errors)
      {
         for(long long b=SIGNED_LOWER_LIMIT; b<=SIGNED_UPPER_LIMIT;b++)
         {
-            // Accurate booth value = M_acc   ? Isn it just Multiplier x Multipicand???????????
-            // Approximate both value =M_app
-            //M_app=area_optimized_hdl_approx(a,b);
-            //M_app=star_booth_opt_v3(a,b);
-            //M_app=lc_booth_opt2(a,b,2);
-//            M_app=lc_baugh_wooley_opt2(a,b,2);
-            //M_app=unsigned_to_signed(M_app,BIT_WIDTH*2);
-            //M_app=ax_bm1(a,b);
-            //M_app=baugh_wooley_hdl(a,b);
-            //M_app=baugh_wooley_hdl_v2(a,b,2);
-            //M_app=multilevel_signed_opt(a,b,4,4);
-            //M_app=unsigned_to_signed(M_app,BIT_WIDTH*2);
-            //M_app=ax_bm1_opt(a,b);
-            //M_app=unsigned_to_signed(M_app,BIT_WIDTH*2);
-            //M_app=multilevel2B_opt(a,b,3,4);
-            //M_app=star_booth_opt_v3(a,b);
-          //  M_app=booth_opt2(a,b);
-            //M_app=unsigned_to_signed(M_app,2*BIT_WIDTH);
-            //M_app=approximate_multiplier(a,b,AXBM2);
-            //M_app=multilevel2B_signed_opt(a,b,3,4);
-            //M_app=ax_bm2_opt(a,b);
-            //M_app=multilevel_opt(a,b,4,4);
-            //M_app=multilevel2B_opt(a,b,4,4);
-            //M_app=multilevel_signed_opt(a,b,3,4);
-            //M_app=area_optimized_hdl_approx(a,b);
-            //M_app=area_optimized_hdl_approx(a,b);
-            //M_app=ax_bm2_opt(a,b);
-            //M_app=lc_baugh_wooley_opt_ac(a,b,2);
-            //M_app=lc_(a,b,2);
-            //M_app=lc_booth_opt(a,b,4);
-            //M_app=lc_baugh_wooley_opt(a,b,1);
-            //products_num[cnt++]=(double)M_app;
             M_acc=a * b;
             products_num[cnt++]=(long long)M_acc;
-            //compute_probabilities(M_app,bit_probabilities);
             ed=ed+abs(M_app-M_acc);
-            //Push((double)abs(M_acc-M_app));
             ber_sum+=ber_error(M_acc,M_app,2*BIT_WIDTH);
             if(M_acc)
             {
@@ -3275,17 +2819,11 @@ void error_benchmarks(double* errors)
     double mred=red/(mred_range);
     errors[MRED]=mred;
     double percentage_error=100*(error_counter)/range;
-    //test
-    //M_acc_max_value=pow((pow(2,BIT_WIDTH)-1),2);
     double nmed=med/(M_acc_max_value);
-    //double nmed1=med/pow((pow(2,BIT_WIDTH)-1),2);
     double ber_error=ber_sum/(double)range;
     errors[NMED]=nmed;
     noramlize_probabilities((double)range,bit_probabilities);
     log_prob(ln_prob_0,ln_prob_1,bit_probabilities);
-    //pr=compute_probablity_num(1000,ln_prob_0,ln_prob_1);
-    //compute_probability_distribution(pr_num,ln_prob_0,ln_prob_1);
-    //write_csv(pr_num,1<<(2*BIT_WIDTH),"one_app_4.csv");
     write_csv(products_num,number_elements,"multiplication_16_c.csv");
 }
 
