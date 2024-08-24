@@ -25,7 +25,7 @@ The Multiplication folder contains C code implementations for various multiplica
 
 ### 2. RTL
 
-The RTL folder includes VHDL code for the RTL implementation of signed multiplication. Separate files are provided for accurate and LC (Logic Cloning) variants. The accurate multiplication utilizes Baugh Wooley (BW) and Radix-4 Booth scheme, with code in files `accurate_bw.vhd` and `accurate_booth.vhd`. LC methodology is employed for approximate multiplication, and the corresponding code is found in files `LC_bw.vhd` and `LC_Booth.vhd`. These multiplication implementations are instantiated in the `top.vhd` file as the top component. The `top_multiple.vhd` file contains multiple instances of the top component, serving as the apex file in the file hierarchy.  These files are to be used to initiate RTL project.
+The RTL folder includes VHDL code for the RTL implementation of signed multiplication. Separate files are provided for accurate and LC (Logic Cloning) variants. The accurate multiplication utilizes Baugh Wooley (BW) and Radix-4 Booth scheme, with code in files `accurate_bw.vhd` and `accurate_booth.vhd`. LC methodology is employed for approximate multiplication, and the corresponding code is found in files `LC_bw.vhd` and `LC_booth.vhd`. These multiplication implementations are instantiated in the `top.vhd` file as the top component. The `top_multiple.vhd` file contains multiple instances of the top component, serving as the apex file in the file hierarchy.  These files are to be used to initiate RTL project.
 
 ### 3. MIMO 
 
